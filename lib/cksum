@@ -1,0 +1,35 @@
+#! /bin/sh
+
+# todo: mysql -e 'truncate table percona.checksums;' 
+# todo: show global status like 'Threads_running' && --max-load
+# set to 6??
+# todo: install percona udf hash functions for performance
+
+usage_exit() {
+	arghelp="[start-full|resume-full|start-partial|resume-partial]";
+	echo "usage: `basename $0` $arghelp";
+	exit 0;
+}
+
+case $1 in
+	"start-full") 
+		ignore=""; 
+		jobstate="--truncate-replicate-table";;
+	"resume-full") 
+		ignore=""; 
+		jobstate="--resume";;
+	"start-partial") 
+		ignore="--ignore-tables-regex '^__'";
+		jobstate="--truncate-replicate-table";;
+	"resume-partial") 
+		ignore="--ignore-tables-regex '^__'";
+		jobstate="--resume";;
+	*)
+		usage_exit;;
+esac
+
+[ ! -z "$MYSQL_SOCKET" ] && socketarg="--socket $MYSQL_SOCKET" || socketarg=""
+
+pt-table-checksum --user root $socketarg \
+	--function 'MD5' $jobstate $ignore
+

@@ -13,13 +13,13 @@ usage_exit() {
 	echo "    report [serverno]";
 	echo "    shell [serverno]";
 	echo "    admin [serverno]";
+	echo "    cksum [serverno]";
 	exit 0;
 }
 
 libcmd() {
 	cmd=$1; shift --;
-	. $lib/$cmd;
-	$cmd $*;
+	exec $lib/$cmd $*;
 }
 
 if [ "$#" -lt "1" ]; then
@@ -54,6 +54,10 @@ case $verb in
 	"admin")
 		get_socket $1; shift;
 		exec mysqladmin -u root -S $socket $*;;
+	"cksum")
+		get_socket $1; shift;
+		export MYSQL_SOCKET=$socket;
+		libcmd $verb $*;;
 	*) usage_exit;;
 esac
 
