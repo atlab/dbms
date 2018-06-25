@@ -8,11 +8,11 @@ lib="${dir}/../lib"
 usage_exit() {
 	echo "usage: $scr cmd <args>";
 	echo "  where 'cmd' is one of:";
-	echo "    start [id]";
-	echo "    stop [id]";
-	echo "    report [id]";
-	echo "    shell [id]";
-	echo "    admin [id]";
+	echo "    start [serverno]";
+	echo "    stop [serverno]";
+	echo "    report [serverno]";
+	echo "    shell [serverno]";
+	echo "    admin [serverno]";
 	exit 0;
 }
 
@@ -27,22 +27,33 @@ if [ "$#" -lt "1" ]; then
 fi
 
 verb=$1
-server=$2; # todo: rework so servrer is not required but available fn
-shift;
 shift;
 
-case $server in
+get_socket() {
 	# todo: parse my_print_defaults mysqld_multi -s
-	"1") socket=/var/run/mysqld/mysqld1.sock;;
-	"2") socket=/var/run/mysqld/mysqld2.sock;;
-esac
+	serverno=$1
+	case $serverno in
+		"1") socket=/var/run/mysqld/mysqld1.sock;;
+		"2") socket=/var/run/mysqld/mysqld2.sock;;
+	esac
+}
 
 case $verb in
-	"start") exec mysqld_multi start $server;;
-	"stop") exec mysqld_multi stop $server;;
-	"report") exec mysqld_multi report $server;; 
-	"shell") exec mysql -u root -S $socket $*;;
-	"admin") exec mysqladmin -u root -S $socket $*;;
+	"start")
+		get_socket $1;
+		exec mysqld_multi start $serverno;;
+	"stop")
+		get_socket $1;
+		exec mysqld_multi stop $serverno;;
+	"report")
+		get_socket $1;
+		exec mysqld_multi report $serverno;; 
+	"shell")
+		get_socket $1; shift;
+		exec mysql -u root -S $socket $*;;
+	"admin")
+		get_socket $1; shift;
+		exec mysqladmin -u root -S $socket $*;;
 	*) usage_exit;;
 esac
 
