@@ -1,0 +1,33 @@
+#! /bin/sh
+
+usage_exit() {
+	echo "Usage: `basename $0` [start|stop|report|shell|admin] id"
+	exit 0;
+}
+
+if [ "$#" -lt "2" ]; then
+	usage_exit;
+fi
+verb=$1
+server=$2
+shift;
+shift;
+
+# todo: parse my_print_defaults mysqld_multi -s
+# todo: logtail verb
+# todo: replication verbs (TBD)
+case $server in
+	"1") socket=/var/run/mysqld/mysqld1.sock;;
+	"2") socket=/var/run/mysqld/mysqld2.sock;;
+	*) usage_exit;;
+esac
+
+case $verb in
+	"start") exec mysqld_multi start $server;;
+	"stop") exec mysqld_multi stop $server;;
+	"report") exec mysqld_multi report $server;; 
+	"shell") exec mysql -u root -S $socket $*;;
+	"admin") exec mysqladmin -u root -S $socket $*;;
+	*) usage_exit;;
+esac
+
