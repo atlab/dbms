@@ -4,6 +4,7 @@ app="$0"
 scr="${app##*/}"
 dir="${app%/*}"
 lib="${dir}/../lib"
+libexec="${dir}/../libexec"
 
 usage_exit() {
 	echo "usage: $scr cmd <args>";
@@ -17,9 +18,9 @@ usage_exit() {
 	exit 0;
 }
 
-libcmd() {
+libexec_cmd() {
 	cmd=$1; shift --;
-	exec $lib/$cmd $*;
+	exec $libexec/$cmd $*;
 }
 
 if [ "$#" -lt "1" ]; then
@@ -57,7 +58,7 @@ case $verb in
 	"cksum")
 		get_socket $1; shift;
 		export MYSQL_SOCKET=$socket;
-		libcmd $verb $*;;
+		libexec_cmd $verb $*;;
 	*) usage_exit;;
 esac
 
