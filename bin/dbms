@@ -1,25 +1,40 @@
 #! /bin/sh
 
+app="$0"
+scr="${app##*/}"
+dir="${app%/*}"
+lib="${dir}/../lib"
+
 usage_exit() {
-	echo "Usage: `basename $0` [start|stop|report|shell|admin] id"
+	echo "usage: $scr cmd <args>";
+	echo "  where 'cmd' is one of:";
+	echo "    start [id]";
+	echo "    stop [id]";
+	echo "    report [id]";
+	echo "    shell [id]";
+	echo "    admin [id]";
 	exit 0;
 }
 
-if [ "$#" -lt "2" ]; then
+libcmd() {
+	cmd=$1; shift --;
+	. $lib/$cmd;
+	$cmd $*;
+}
+
+if [ "$#" -lt "1" ]; then
 	usage_exit;
 fi
+
 verb=$1
-server=$2
+server=$2; # todo: rework so servrer is not required but available fn
 shift;
 shift;
 
-# todo: parse my_print_defaults mysqld_multi -s
-# todo: logtail verb
-# todo: replication verbs (TBD)
 case $server in
+	# todo: parse my_print_defaults mysqld_multi -s
 	"1") socket=/var/run/mysqld/mysqld1.sock;;
 	"2") socket=/var/run/mysqld/mysqld2.sock;;
-	*) usage_exit;;
 esac
 
 case $verb in
