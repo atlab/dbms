@@ -4,8 +4,7 @@
 # todo: show global status like 'Threads_running' && --max-load
 # set to 6??
 # todo: install percona udf hash functions for performance
-# todo: verify --ignore-tables-regex is working.. doesn't seem to be
-#   e.g: __trial_res_fast__spikes is taking.. 
+# note: ignore-tables-regex doesn't seem to like quoting
 
 usage_exit() {
 	arghelp="[start-full|resume-full|start-partial|resume-partial]";
@@ -21,10 +20,10 @@ case $1 in
 		ignore=""; 
 		jobstate="--resume";;
 	"start-partial") 
-		ignore="--ignore-tables-regex '^__'";
+		ignore="--ignore-tables-regex ^__";
 		jobstate="--truncate-replicate-table";;
 	"resume-partial") 
-		ignore="--ignore-tables-regex '^__'";
+		ignore="--ignore-tables-regex ^__";
 		jobstate="--resume";;
 	*)
 		usage_exit;;
