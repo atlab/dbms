@@ -3,7 +3,7 @@
 # todo: mysql -e 'truncate table percona.checksums;' 
 # todo: show global status like 'Threads_running' && --max-load
 # set to 6??
-# todo: install percona udf hash functions for performance
+# todo: make hash functions configurable somehow
 # note: ignore-tables-regex doesn't seem to like quoting
 
 usage_exit() {
@@ -32,5 +32,5 @@ esac
 [ ! -z "$MYSQL_SOCKET" ] && socketarg="--socket $MYSQL_SOCKET" || socketarg=""
 
 pt-table-checksum --user root $socketarg \
-	--function 'MD5' $jobstate $ignore
+	--function 'fnv1a_64' $jobstate $ignore
 
