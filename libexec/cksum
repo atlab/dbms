@@ -1,10 +1,14 @@
 #! /bin/sh
 
-# todo: mysql -e 'truncate table percona.checksums;' 
 # todo: show global status like 'Threads_running' && --max-load
-# set to 6??
-# todo: make hash functions configurable somehow
-# note: ignore-tables-regex doesn't seem to like quoting
+#   set to 10?? (nproc on db2==16, on db=32)
+# todo: make hash functions configurable somehow -
+#   current code requires 'fnv1a_64' to be installed.
+# chunk strategy:
+#   - we have relatively low concurrency on heavy duty queries on big tables
+#   - therefore using high chunk time matches regular query load, and 
+#     facillitates checksumming large tables.
+ 
 
 usage_exit() {
 	arghelp="[start-full|resume-full|start-partial|resume-partial]";
@@ -32,5 +36,6 @@ esac
 [ ! -z "$MYSQL_SOCKET" ] && socketarg="--socket $MYSQL_SOCKET" || socketarg=""
 
 pt-table-checksum --user root $socketarg \
+	--nocheck-plan --chunk-time=300 \
 	--function 'fnv1a_64' $jobstate $ignore
 
