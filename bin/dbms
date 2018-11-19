@@ -19,7 +19,7 @@ usage_exit() {
 }
 
 libexec_cmd() {
-	cmd=$1; shift --;
+	cmd=$1; shift;
 	exec $libexec/$cmd $*;
 }
 
