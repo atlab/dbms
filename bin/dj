@@ -1,0 +1,11 @@
+#! /usr/bin/env python
+
+import datajoint as dj
+from code import interact
+from collections import ChainMap
+
+def privs(user='root', host='%%'):
+    for x in dj.conn().query("show grants for '{}'@'{}';".format(user,host)):
+        print(x)
+
+interact('dj repl', local=dict(ChainMap(locals(), globals())))
