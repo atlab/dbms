@@ -35,7 +35,10 @@ esac
 
 [ ! -z "$MYSQL_SOCKET" ] && socketarg="--socket $MYSQL_SOCKET" || socketarg=""
 
-pt-table-checksum --user root $socketarg \
+pass=`awk -F= '/^pass/{print $2}' ~/.my.cnf`
+[ ! -z "$pass" ] && passarg="--password $pass" || passarg=""
+
+pt-table-checksum --user root $passarg $socketarg \
 	--nocheck-plan --chunk-time=300 \
 	--function 'fnv1a_64' $jobstate $ignore
 
