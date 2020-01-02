@@ -1,0 +1,23 @@
+
+====
+dbms
+====
+
+This module contains 'dbms', a set of shell scripts for basic MySQL database 
+managment/operation.
+
+The script currently handles the following:
+
+  - start db
+  - stop db
+  - report db status
+  - db shell
+  - mysqladmin launch
+  - replica checksumming
+
+In a mysqld_multi configured server installation. Specific documentation
+remains to be written, for now, see the code and usage synopsys.
+
+Some site-local configuration is currently hardcoded into the scripts,
+more work will modularize this configuration and add other script actions.
+
