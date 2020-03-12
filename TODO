@@ -2,5 +2,19 @@
 
 - [ ] Documentation
 - [ ] Features 
-  - [ ] Outline missing/needed features from development notes
+  - [ ] log verb to tail error log
+  - [ ] replication verbs: [start|stop|info]
+  - [ ] show engine innodb status command
+  - [ ] pt-show-grants launcher
+  - [ ] checksum:
+    - [ ] per-table run
+    - [ ] time-limited full run
+    - [ ] status report
+    - [ ] show diffs
+      `pt-table-sync  --print --replicate 'percona.checksums' localhost`
+    - [ ] push diffs
+      `pt-table-sync  --execute --replicate 'percona.checksums' localhost`
+  - [ ] storage:
+    - [ ] table size report command
+
 
