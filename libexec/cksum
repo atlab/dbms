@@ -16,6 +16,27 @@ usage_exit() {
 	exit 0;
 }
 
+sqlreport(){  # TODO: integrate
+	# empty if no errors
+	mysql -u root -S /var/run/mysqld/mysqld1.sock <<EOF
+		SELECT db, tbl, SUM(this_cnt) AS total_rows, COUNT(*) AS chunks
+		FROM percona.checksums
+		WHERE (
+			master_cnt <> this_cnt
+			OR master_crc <> this_crc
+			OR ISNULL(master_crc) <> ISNULL(this_crc))
+		GROUP BY db, tbl;
+EOF
+}
+
+checksumreport() { # TODO: integrate
+	/usr/bin/pt-table-checksum \
+		--user root \
+		--socket /var/run/mysqld/mysqld1.sock \
+		--ignore-tables-regex '^__' \
+		--replicate-check-only
+}
+
 case $1 in
 	"start-full") 
 		ignore=""; 
