@@ -2,6 +2,9 @@
 
 - [ ] Documentation
 - [ ] Features 
+  - [ ] start up:
+    - [ ] add some sort of do-not-start-if-log-not-applied check to prevent
+          mis-start of partially-restored innobackup backups 
   - [ ] log verb to tail error log
   - [ ] replication verbs: [start|stop|info]
   - [ ] show engine innodb status command
