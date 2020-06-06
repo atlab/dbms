@@ -69,7 +69,7 @@ case $1 in
 		checksumrun;;
 	"resume-partial") 
 		ignore="--ignore-tables-regex ^__";
-		jobstate="--resume";;
+		jobstate="--resume";
 		checksumrun;;
 	"report")
 		checksumreport;;
