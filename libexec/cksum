@@ -13,7 +13,7 @@
  
 
 usage_exit() {
-	arghelp="[start-full|resume-full|start-partial|resume-partial]";
+	arghelp="[start-full|resume-full|start-partial|resume-partial|report]";
 	echo "usage: `basename $0` $arghelp";
 	exit 0;
 }
