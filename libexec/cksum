@@ -32,7 +32,8 @@ EOF
 }
 
 checksumrun(){
-	pt-table-checksum --user root $passarg $socketarg \
+	pt-table-checksum \
+		--user root $passarg $socketarg \
 		--no-check-binlog-format --nocheck-plan --chunk-time=300 \
 		--function 'fnv1a_64' $jobstate $ignore
 }
@@ -40,6 +41,7 @@ checksumrun(){
 checksumreport() { # TODO: integrate
 	/usr/bin/pt-table-checksum \
 		--user root \
+		$passarg \
 		--socket /var/run/mysqld/mysqld1.sock \
 		--no-check-binlog-format \
 		--ignore-tables-regex '^__' \
