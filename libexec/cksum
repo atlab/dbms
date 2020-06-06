@@ -1,5 +1,7 @@
 #! /bin/sh
 
+# cksum: run pt-table-checksum or report on status.
+
 # todo: show global status like 'Threads_running' && --max-load
 #   set to 10?? (nproc on db2==16, on db=32)
 # todo: make hash functions configurable somehow -
@@ -16,7 +18,7 @@ usage_exit() {
 	exit 0;
 }
 
-sqlreport(){  # TODO: integrate
+sqlreport(){
 	# empty if no errors
 	mysql -u root -S /var/run/mysqld/mysqld1.sock <<EOF
 		SELECT db, tbl, SUM(this_cnt) AS total_rows, COUNT(*) AS chunks
@@ -29,6 +31,12 @@ sqlreport(){  # TODO: integrate
 EOF
 }
 
+checksumrun(){
+	pt-table-checksum --user root $passarg $socketarg \
+		--no-check-binlog-format --nocheck-plan --chunk-time=300 \
+		--function 'fnv1a_64' $jobstate $ignore
+}
+
 checksumreport() { # TODO: integrate
 	/usr/bin/pt-table-checksum \
 		--user root \
@@ -38,29 +46,34 @@ checksumreport() { # TODO: integrate
 		--replicate-check-only
 }
 
-case $1 in
-	"start-full") 
-		ignore=""; 
-		jobstate="--truncate-replicate-table";;
-	"resume-full") 
-		ignore=""; 
-		jobstate="--resume";;
-	"start-partial") 
-		ignore="--ignore-tables-regex ^__";
-		jobstate="--truncate-replicate-table";;
-	"resume-partial") 
-		ignore="--ignore-tables-regex ^__";
-		jobstate="--resume";;
-	*)
-		usage_exit;;
-esac
+
+# _start:
 
 [ ! -z "$MYSQL_SOCKET" ] && socketarg="--socket $MYSQL_SOCKET" || socketarg=""
 
 pass=`awk -F= '/^pass/{print $2}' ~/.my.cnf`
 [ ! -z "$pass" ] && passarg="--password $pass" || passarg=""
 
-pt-table-checksum --user root $passarg $socketarg \
-	--no-check-binlog-format --nocheck-plan --chunk-time=300 \
-	--function 'fnv1a_64' $jobstate $ignore
+case $1 in
+	"start-full") 
+		ignore=""; 
+		jobstate="--truncate-replicate-table"
+		checksumrun;;
+	"resume-full") 
+		ignore=""; 
+		jobstate="--resume";
+		checksumrun;;
+	"start-partial") 
+		ignore="--ignore-tables-regex ^__";
+		jobstate="--truncate-replicate-table";
+		checksumrun;;
+	"resume-partial") 
+		ignore="--ignore-tables-regex ^__";
+		jobstate="--resume";;
+		checksumrun;;
+	"report")
+		checksumreport;;
+	*)
+		usage_exit;;
+esac
 
