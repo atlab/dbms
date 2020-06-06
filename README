@@ -21,3 +21,8 @@ remains to be written, for now, see the code and usage synopsys.
 Some site-local configuration is currently hardcoded into the scripts,
 more work will modularize this configuration and add other script actions.
 
+These are, currently (at least):
+
+   - mysql server socket locations
+   - expectation that mysql root password is stored in ~/.my.cnf
+
