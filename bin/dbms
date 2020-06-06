@@ -23,12 +23,8 @@ libexec_cmd() {
 	exec $libexec/$cmd $*;
 }
 
-if [ "$#" -lt "1" ]; then
-	usage_exit;
-fi
-
-verb=$1
-shift;
+[ "$#" -lt "1" ] && usage_exit || verb=$1;
+[ "$#" -ge "2" ] && shift || usage_exit;
 
 get_socket() {
 	# todo: parse my_print_defaults mysqld_multi -s
