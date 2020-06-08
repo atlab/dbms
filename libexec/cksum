@@ -10,6 +10,20 @@
 #   - we have relatively low concurrency on heavy duty queries on big tables
 #   - therefore using high chunk time matches regular query load, and 
 #     facillitates checksumming large tables.
+
+# notes on showing actual differences -
+# really, review pt-table-sync documentation - but, in a nutshell:
+#
+# to view all differences:
+#
+#   # pt-table-sync --print --replicate 'percona.checksums'
+#
+# to push all diffferences:
+#
+#   # pt-table-sync --execute --replicate 'percona.checksums'
+#
+# in reality, you probably don't want to auto push all, but instead
+# use more arguments to filter down the set of changes and apply carefully.
  
 
 usage_exit() {
